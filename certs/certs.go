@@ -108,6 +108,11 @@ func getPeerCertReq(namespace, clusterDomain string) *csr.CertificateRequest {
 		Hosts: []string{
 			"*.cilium-etcd." + namespace + ".svc",
 			"*.cilium-etcd." + namespace + ".svc." + clusterDomain,
+
+			// Workaround for https://github.com/coreos/etcd-operator/issues/2160 needed
+			// until a CoreDNS release that fixes https://github.com/coredns/coredns/issues/3686
+			"*.cilium-etcd-client." + namespace + ".svc",
+			"*.cilium-etcd-client." + namespace + ".svc." + clusterDomain,
 		},
 		CN: "etcd peer",
 	}
