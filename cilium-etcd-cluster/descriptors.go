@@ -18,8 +18,9 @@ import (
 	"github.com/cilium/cilium-etcd-operator/pkg/defaults"
 
 	"github.com/coreos/etcd-operator/pkg/apis/etcd/v1beta2"
-	"k8s.io/api/core/v1"
-	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	v1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // CiliumEtcdCluster returns a Cilium ETCD cluster on the given namespace
@@ -30,7 +31,7 @@ func CiliumEtcdCluster(namespace, repository, version string, size int, etcdEnv 
 		etcdNodeSelector = nodeSelector
 	}
 	ciliumEtcdCluster := &v1beta2.EtcdCluster{
-		ObjectMeta: meta_v1.ObjectMeta{
+		ObjectMeta: metav1.ObjectMeta{
 			Name:      defaults.ClusterName,
 			Namespace: namespace,
 			Labels:    defaults.CiliumLabelsApp,
@@ -53,6 +54,43 @@ func CiliumEtcdCluster(namespace, repository, version string, size int, etcdEnv 
 				Labels:       defaults.CiliumLabelsApp,
 				BusyboxImage: busyboxImage,
 				NodeSelector: etcdNodeSelector,
+				Resources: v1.ResourceRequirements{
+					Requests: v1.ResourceList{
+						v1.ResourceCPU:    *resource.NewMilliQuantity(1000, resource.DecimalSI),
+						v1.ResourceMemory: *resource.NewQuantity(1<<30, resource.BinarySI),
+					},
+				},
+				Affinity: &v1.Affinity{
+					PodAntiAffinity: &v1.PodAntiAffinity{
+						PreferredDuringSchedulingIgnoredDuringExecution: []v1.WeightedPodAffinityTerm{
+							// Try to spread the across Nodes if possible.
+							{
+								Weight: 2,
+								PodAffinityTerm: v1.PodAffinityTerm{
+									LabelSelector: &metav1.LabelSelector{
+										MatchLabels: map[string]string{
+											"etcd_cluster": defaults.ClusterName,
+										},
+									},
+									TopologyKey: "kubernetes.io/hostname",
+								},
+							},
+							// Try to spread across zones if possible.
+							{
+								// Weight zone spreading as less important than node spreading.
+								Weight: 1,
+								PodAffinityTerm: v1.PodAffinityTerm{
+									LabelSelector: &metav1.LabelSelector{
+										MatchLabels: map[string]string{
+											"etcd_cluster": defaults.ClusterName,
+										},
+									},
+									TopologyKey: "failure-domain.beta.kubernetes.io/zone",
+								},
+							},
+						},
+					},
+				},
 			},
 		},
 	}
