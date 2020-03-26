@@ -140,6 +140,7 @@ func getServerCertReq(namespace string) *csr.CertificateRequest {
 			"cilium-etcd-client." + namespace + ".svc",
 			"*.mesh.cilium.io",
 			"localhost",
+			"127.0.0.1",
 
 			// Workaround for https://github.com/coreos/etcd-operator/issues/2160
 			// needed even after fix for https://github.com/coredns/coredns/issues/3686
@@ -183,6 +184,7 @@ func getDefaultConfig() *config.Signing {
 					"signing",
 					"key encipherment",
 					"server auth",
+					"client auth",
 				},
 			},
 			defaults.CiliumEtcdClientTLS: {
