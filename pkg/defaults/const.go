@@ -24,7 +24,7 @@ var (
 	CiliumEtcdPeerTLS   = "cilium-etcd-peer-tls"
 	CiliumEtcdSecrets   = "cilium-etcd-secrets"
 
-	ETCDVersion = "3.3.12"
+	ETCDVersion = "3.3.19"
 
 	ClusterSize = 3
 
