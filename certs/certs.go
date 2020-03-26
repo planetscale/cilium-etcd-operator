@@ -41,7 +41,7 @@ func GenCertificates(namespace, clusterDomain string) (map[string]map[string][]b
 		return nil, err
 	}
 
-	serverCert, serverKey, err := generateCertificate(ca, caKey, defaults.CiliumEtcdServerTLS, getServerCertReq(namespace))
+	serverCert, serverKey, err := generateCertificate(ca, caKey, defaults.CiliumEtcdServerTLS, getServerCertReq(namespace, clusterDomain))
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +122,7 @@ func getPeerCertReq(namespace, clusterDomain string) *csr.CertificateRequest {
 
 // getServerCertReq returns the server certificate requests for the given
 // namespace.
-func getServerCertReq(namespace string) *csr.CertificateRequest {
+func getServerCertReq(namespace string, clusterDomain string) *csr.CertificateRequest {
 	return &csr.CertificateRequest{
 		Names: []csr.Name{
 			{
@@ -146,6 +146,8 @@ func getServerCertReq(namespace string) *csr.CertificateRequest {
 			// needed even after fix for https://github.com/coredns/coredns/issues/3686
 			"*.cilium-etcd-client." + namespace + ".svc",
 			"*.cilium-etcd-external." + namespace + ".svc",
+			"cilium-etcd-client." + namespace + ".svc." + clusterDomain,
+			"*.cilium-etcd-client." + namespace + ".svc." + clusterDomain,
 		},
 		CN: "etcd server",
 	}
