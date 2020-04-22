@@ -59,6 +59,7 @@ func EtcdOperatorDeployment(namespace, ownerName, ownerUID, operatorImage, opera
 					Labels: defaults.CiliumLabelsApp,
 				},
 				Spec: core_v1.PodSpec{
+					PriorityClassName:  "ps-basic-infrastructure",
 					ServiceAccountName: "cilium-etcd-sa",
 					Containers: []core_v1.Container{
 						{
