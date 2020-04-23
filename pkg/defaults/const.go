@@ -28,7 +28,7 @@ var (
 
 	ClusterSize = 3
 
-	DefaultOperatorImage = "quay.io/coreos/etcd-operator:v0.9.4"
+	DefaultOperatorImage = "us.gcr.io/planetscale-production/etcd-operator:v0.9.4-1"
 
 	DefaultBusyboxImage = "docker.io/library/busybox:1.28.0-glibc"
 

@@ -157,7 +157,7 @@ func init() {
 		"operator-image", defaults.DefaultOperatorImage, "Etcd Operator Image to be used")
 	viper.BindEnv("operator-image", "CILIUM_ETCD_OPERATOR_IMAGE")
 	flags.StringVar(&operatorImagePullSecret,
-		"operator-image-pull-secret", "", "Secret to be used for Image Pull")
+		"operator-image-pull-secret", "ps-gcr-credentials", "Secret to be used for Image Pull")
 	viper.BindEnv("operator-image-pull-secret", "CILIUM_ETCD_OPERATOR_IMAGE_PULL_SECRET")
 	flags.StringToStringVar(&etcdNodeSelector, "etcd-node-selector", map[string]string{}, "etcd node selector")
 	viper.BindEnv("etcd-node-selector", "CILIUM_ETCD_OPERATOR_ETCD_NODE_SELECTOR")
