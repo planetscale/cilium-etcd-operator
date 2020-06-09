@@ -61,6 +61,26 @@ func CiliumEtcdCluster(namespace, repository, version string, size int, etcdEnv 
 					},
 				},
 				Affinity: &v1.Affinity{
+					NodeAffinity: &v1.NodeAffinity{
+						RequiredDuringSchedulingIgnoredDuringExecution: &v1.NodeSelector{
+							NodeSelectorTerms: []v1.NodeSelectorTerm{
+								{
+									MatchExpressions: []v1.NodeSelectorRequirement{
+										{
+											Key:      "aws.amazon.com/lifecycle",
+											Operator: v1.NodeSelectorOpNotIn,
+											Values:   []string{"spot"},
+										},
+										{
+											Key:      "cloud.google.com/gke-preemptible",
+											Operator: v1.NodeSelectorOpNotIn,
+											Values:   []string{"true"},
+										},
+									},
+								},
+							},
+						},
+					},
 					PodAntiAffinity: &v1.PodAntiAffinity{
 						PreferredDuringSchedulingIgnoredDuringExecution: []v1.WeightedPodAffinityTerm{
 							// Try to spread the across Nodes if possible.
