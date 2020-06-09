@@ -69,6 +69,11 @@ func CiliumEtcdCluster(namespace, repository, version string, size int, etcdEnv 
 									Operator: v1.NodeSelectorOpNotIn,
 									Values:   []string{"spot"},
 								},
+								MatchExpressions: []v1.NodeSelectorRequirement{
+									Key:      "cloud.google.com/gke-preemptible",
+									Operator: v1.NodeSelectorOpNotIn,
+									Values:   []string{"true"},
+								},
 							},
 						},
 					},
