@@ -64,15 +64,19 @@ func CiliumEtcdCluster(namespace, repository, version string, size int, etcdEnv 
 					NodeAffinity: &v1.NodeAffinity{
 						RequiredDuringSchedulingIgnoredDuringExecution: &v1.NodeSelector{
 							NodeSelectorTerms: []v1.NodeSelectorTerm{
-								MatchExpressions: []v1.NodeSelectorRequirement{
-									Key:      "aws.amazon.com/lifecycle",
-									Operator: v1.NodeSelectorOpNotIn,
-									Values:   []string{"spot"},
-								},
-								MatchExpressions: []v1.NodeSelectorRequirement{
-									Key:      "cloud.google.com/gke-preemptible",
-									Operator: v1.NodeSelectorOpNotIn,
-									Values:   []string{"true"},
+								{
+									MatchExpressions: []v1.NodeSelectorRequirement{
+										{
+											Key:      "aws.amazon.com/lifecycle",
+											Operator: v1.NodeSelectorOpNotIn,
+											Values:   []string{"spot"},
+										},
+										{
+											Key:      "cloud.google.com/gke-preemptible",
+											Operator: v1.NodeSelectorOpNotIn,
+											Values:   []string{"true"},
+										},
+									},
 								},
 							},
 						},
